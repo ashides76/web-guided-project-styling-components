@@ -1,19 +1,40 @@
 import React, { useState, useEffect } from 'react'
 import { BASE_URL, API_KEY } from '../constants'
+import styled, { keyframes } from 'styled-components'
 import axios from 'axios'
 
+const kf = keyframes`
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateZ(0);
+  }
+`
+
+const StyledDetails = styled.div`
+  opacity: 0;
+  transform: scale(2) rotateZ(180deg);
+  animation: ${kf} 0.5s ease-in-out forwards;
+  background-color: ${props => props.color ? props.color : 'initial'};
+  p {
+    color: ${props => props.theme.tertiaryColor};
+  }
+  h2 {
+    color: ${props => props.theme.primaryColor};
+  }
+`
+
 export default function Details(props) {
-  const { friendId, close } = props
+  const { friendId, close, color } = props
   const [details, setDetails] = useState(null)
 
   useEffect(() => {
     axios.get(`${BASE_URL}/friends/${friendId}?api_key=${API_KEY}`)
       .then(res => { setDetails(res.data) })
-      .catch(err => { console.error(err) })
-  }, [friendId])
+      .catch(err => { debugger }) // eslint-disable-line
+  }, [])
 
   return (
-    <div className='container'>
+    <StyledDetails color={color} className='container'>
       <h2>Details:</h2>
       {
         details &&
@@ -29,6 +50,6 @@ export default function Details(props) {
         </>
       }
       <button onClick={close}>Close</button>
-    </div>
+    </StyledDetails>
   )
 }
